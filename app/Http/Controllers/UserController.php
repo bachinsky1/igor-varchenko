@@ -12,7 +12,7 @@ class UserController extends Controller
     public function index(Request $request): JsonResponse
     {
         
-        $count = $request->input('count') ?? 5;
+        $count = $request->input('count') ?? 6;
         $totalUsers = DB::table('users')->count();
         $totalPages = ceil($totalUsers / $count);
         $page = $request->input('page') ?? 1;
