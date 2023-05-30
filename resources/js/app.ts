@@ -31,6 +31,8 @@ const buildUrl = (param: Param): string => {
 
 const fetchData = async (param: Param): Promise<void> => {
     const url = buildUrl(param)
+    const tbody = document.querySelector('#tBody') as HTMLTableElement
+    tbody.innerHTML = `<h3 class="position-absolute top-50 start-50 translate-middle">Loading data...</h3>`
     const response = await fetch(url)
     const data = await response.json()
 
@@ -83,7 +85,7 @@ const renderTableBody = (users: any): void => {
         link.addEventListener('click', async (event) => {
             event.preventDefault()
             const modalBody = document.querySelector('#modalBody') as HTMLElement
-            modalBody.innerHTML = `<h3>Wait. Loading data...</h3>`
+            modalBody.innerHTML = `<h3 class="position-absolute top-50 start-50 translate-middle">Loading data...</h3>`
             const response = await fetch(`${location.origin}/api/v1/users/${user.id}`)
             const data = await response.json()
 
