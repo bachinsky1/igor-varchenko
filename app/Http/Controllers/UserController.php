@@ -16,9 +16,13 @@ class UserController extends Controller
         $totalUsers = DB::table('users')->count();
         $totalPages = ceil($totalUsers / $count);
         $page = $request->input('page') ?? 1;
-        $offset = ($page - 1) * $count;
-        // dd($offset);
 
+        $offset = ($page - 1) * $count;
+
+        if (!!$request->input('offset')) {
+            $offset = $request->input('offset');
+        }
+        
         $users = User::join('positions', 'users.position_id', '=', 'positions.id')
             ->select('users.*', 'positions.name as position')
             ->skip($offset)
@@ -50,7 +54,11 @@ class UserController extends Controller
     {
         return response()->json([
             'success' => true,
-            'user' => User::with('position')->find($id)
+            'user' => User::join('positions', 'users.position_id', '=', 'positions.id')
+                ->select('users.*', 'positions.name as position')
+                ->orderBy('id', 'asc')
+                ->get()
+                ->find($id)
         ]);
     }
 

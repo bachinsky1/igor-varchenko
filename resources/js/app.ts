@@ -1,12 +1,12 @@
-import { count } from "console"
 
+import 'bootstrap'
 interface Param {
     page?: number,
     count?: number,
     offset?: number
 }
 
-const rowsCount = 10
+const rowsCount = 5
 
 const buildUrl = (param: Param): string => {
     let url = `${location.origin}/api/v1/users?`
@@ -29,7 +29,7 @@ const buildUrl = (param: Param): string => {
     return url
 }
 
-const fetchData = async (param: Param) => {
+const fetchData = async (param: Param): Promise<void> => {
     const url = buildUrl(param)
     const response = await fetch(url)
     const data = await response.json()
@@ -47,8 +47,7 @@ const fetchData = async (param: Param) => {
     })
 }
 
-
-const renderTableBody = (users: any) => {
+const renderTableBody = (users: any): void => {
     const tbody = document.querySelector('#tBody') as HTMLTableElement
     tbody.innerHTML = ''
 
@@ -66,13 +65,39 @@ const renderTableBody = (users: any) => {
         const email = document.createElement('td')
         const phone = document.createElement('td')
         const position = document.createElement('td')
+        const button = document.createElement('td')
 
         id.textContent = user.id || ''
-        
+
         name.textContent = user.name || ''
         email.textContent = user.email || ''
         phone.textContent = user.phone || ''
         position.textContent = user.position || ''
+
+        const link = document.createElement('a') as HTMLAnchorElement
+
+        link.setAttribute('href', '#')
+        link.setAttribute('data-bs-toggle', 'modal')
+        link.setAttribute('data-bs-target', '#exampleModal') 
+        link.textContent = `open`
+        link.addEventListener('click', async (event) => {
+            event.preventDefault()
+            const modalBody = document.querySelector('#modalBody') as HTMLElement
+            modalBody.innerHTML = `<h3>Wait. Loading data...</h3>`
+            const response = await fetch(`${location.origin}/api/v1/users/${user.id}`)
+            const data = await response.json()
+
+            modalBody.innerHTML = `
+                <p><img src="${data.user.photo}" /></p>
+                <p>User ID: ${data.user.id}</p>
+                <p>Name: ${data.user.name}</p>
+                <p>Email: ${data.user.email}</p>
+                <p>Phone: ${data.user.phone}</p>
+                <p>Position: ${data.user.position}</p>
+            `
+        })
+
+        button.appendChild(link)
 
         tr.appendChild(id)
         tr.appendChild(photo)
@@ -80,20 +105,24 @@ const renderTableBody = (users: any) => {
         tr.appendChild(email)
         tr.appendChild(phone)
         tr.appendChild(position)
+        tr.appendChild(button)
 
         tbody?.appendChild(tr)
     }
 }
 
-const renderTableFooter = (data) => {
+const renderTableFooter = (data: any): void => {
     const tfoot = document.querySelector('#tFoot') as HTMLElement
     tfoot.innerHTML = ''
+
     const nav = document.createElement('nav') as HTMLElement
+
     const ul = document.createElement('ul') as HTMLElement
     ul.classList.add(...['pagination', 'justify-content-center'])
 
     let li = document.createElement('li') as HTMLElement
     li.classList.add(...['page-item'])
+
     let link = document.createElement('a') as HTMLAnchorElement
     link.setAttribute('href', '#')
     link.classList.add(...['page-link'])
@@ -106,6 +135,7 @@ const renderTableFooter = (data) => {
             count: rowsCount
         })
     })
+
     li.appendChild(link)
     ul.appendChild(li)
 
@@ -114,17 +144,20 @@ const renderTableFooter = (data) => {
 
         li.classList.add(...['page-item'])
         const link = document.createElement('a') as HTMLAnchorElement
+
         link.setAttribute('href', '#')
         link.classList.add(...['page-link'])
         link.textContent = `${index}`
         link.dataset.row_id = index.toString()
-        link.addEventListener('click', (event) => { 
+
+        link.addEventListener('click', (event) => {
             event.preventDefault()
             fetchData({
                 page: index,
                 count: rowsCount
-            }) 
+            })
         })
+
         li.appendChild(link)
         ul.appendChild(li)
     }
@@ -140,7 +173,8 @@ const renderTableFooter = (data) => {
         event.preventDefault()
         const page = Number(data.page)
         fetchData({
-            page: page < data.total_pages ? page + 1 : page
+            page: page < data.total_pages ? page + 1 : page,
+            count: rowsCount
         })
     })
 
@@ -154,6 +188,5 @@ const renderTableFooter = (data) => {
 fetchData({
     page: 1,
     count: rowsCount,
-    // offset: 1,
 })
 
