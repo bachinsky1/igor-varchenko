@@ -199,7 +199,21 @@ fetchData({
 
 const myModal = document.querySelector('#createUserModal') as HTMLElement 
 
-myModal.addEventListener('shown.bs.modal', function () {
-    
+myModal.addEventListener('shown.bs.modal', async () => {
+    const response = await fetch(`${location.origin}/api/v1/positions`)
+    const data = await response.json()
+    renderSelect(data.positions)
+    console.log(data)
 })
+
+const renderSelect = (positions: any) => {
+    const select = document.querySelector('#userPosition') as HTMLSelectElement
+    select.innerHTML = ''
+    for (const position of positions) {
+        const option = document.createElement('option') as HTMLElement
+        option.setAttribute('value', position.id)
+        option.textContent = position.name
+        select?.appendChild(option)
+    }
+}
 

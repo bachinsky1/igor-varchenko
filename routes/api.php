@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PositionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,4 +24,5 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get("/users", [UserController::class, 'index']);
     Route::post("/users", [UserController::class, 'store']);
     Route::get("/users/{id}", [UserController::class, 'getById']);
+    Route::get("/positions", [PositionController::class, 'index']);
 });
