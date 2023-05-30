@@ -197,3 +197,9 @@ fetchData({
     count: rowsCount,
 })
 
+const myModal = document.querySelector('#createUserModal') as HTMLElement 
+
+myModal.addEventListener('shown.bs.modal', function () {
+    
+})
+
