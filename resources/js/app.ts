@@ -202,8 +202,7 @@ const myModal = document.querySelector('#createUserModal') as HTMLElement
 myModal.addEventListener('shown.bs.modal', async () => {
     const response = await fetch(`${location.origin}/api/v1/positions`)
     const data = await response.json()
-    renderSelect(data.positions)
-    console.log(data)
+    renderSelect(data.positions) 
 })
 
 const renderSelect = (positions: any) => {
